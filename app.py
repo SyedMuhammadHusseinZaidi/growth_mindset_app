@@ -6,7 +6,7 @@ st.title("🚀 Growth Mindset Challenge")
 st.header("Unlock Your Potential with a Growth Mindset")
 
 # Introduction section with image
-st.image("C:\\Users\\MUHAMMAD PC\\3D Objects\\Growth Mindset Vs Fixed Mindset.png", caption="Growth Mindset", use_column_width=True)
+st.image("images\\Growth Mindset Vs Fixed Mindset.png", caption="Growth Mindset", use_column_width=True)
 
 
 st.write("""
