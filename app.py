@@ -9,8 +9,6 @@ st.header("Unlock Your Potential with a Growth Mindset")
 image = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 if image:
     st.image(image=image)
-    
-st.image("images\\Growth Mindset Vs Fixed Mindset.png", caption="Growth Mindset", use_column_width=True)
 
 st.write("""
 The **growth mindset** is the belief that your abilities and intelligence can be developed through hard work, perseverance, and learning from mistakes.
