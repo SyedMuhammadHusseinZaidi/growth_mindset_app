@@ -1,113 +1,225 @@
 import streamlit as st
-import random
+import math
+import datetime
 
-# Title and Header
-st.title("🚀 Growth Mindset Challenge")
-st.header("Unlock Your Potential with a Growth Mindset")
+# ----------------------------
+# Conversion Functions Section
+# ----------------------------
 
-# Introduction section with image
-image = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
-if image:
-    st.image(image=image)
+def convert_length(value, conversion):
+    if conversion == "Kilometers to Miles":
+        return value * 0.621371
+    elif conversion == "Miles to Kilometers":
+        return value / 0.621371
+    elif conversion == "Meters to Feet":
+        return value * 3.28084
+    elif conversion == "Feet to Meters":
+        return value / 3.28084
+    elif conversion == "Centimeters to Inches":
+        return value * 0.393701
+    elif conversion == "Inches to Centimeters":
+        return value / 0.393701
+    elif conversion == "Millimeters to Inches":
+        return value * 0.0393701
+    elif conversion == "Inches to Millimeters":
+        return value / 0.0393701
 
-st.write("""
-The **growth mindset** is the belief that your abilities and intelligence can be developed through hard work, perseverance, and learning from mistakes.
-This app will guide you in adopting a growth mindset to unlock your full potential.
-""")
+def convert_temperature(value, conversion):
+    if conversion == "Celsius to Fahrenheit":
+        return (value * 9/5) + 32
+    elif conversion == "Fahrenheit to Celsius":
+        return (value - 32) * 5/9
+    elif conversion == "Celsius to Kelvin":
+        return value + 273.15
+    elif conversion == "Kelvin to Celsius":
+        return value - 273.15
+    elif conversion == "Fahrenheit to Kelvin":
+        return (value - 32) * 5/9 + 273.15
+    elif conversion == "Kelvin to Fahrenheit":
+        return (value - 273.15) * 9/5 + 32
 
+def convert_weight(value, conversion):
+    if conversion == "Kilograms to Pounds":
+        return value * 2.20462
+    elif conversion == "Pounds to Kilograms":
+        return value / 2.20462
+    elif conversion == "Grams to Ounces":
+        return value * 0.035274
+    elif conversion == "Ounces to Grams":
+        return value / 0.035274
 
-# Sidebar for quick navigation
-st.sidebar.title("Navigation")
-st.sidebar.subheader("Jump to Section:")
-st.sidebar.markdown("[What is Growth Mindset?](#what-is-growth-mindset)")
-st.sidebar.markdown("[How to Practice?](#how-to-practice-growth-mindset)")
-st.sidebar.markdown("[Your Goals](#your-learning-goals)")
-st.sidebar.markdown("[Motivational Quotes](#motivational-quote-of-the-day)")
+def convert_volume(value, conversion):
+    if conversion == "Liters to Gallons":
+        return value * 0.264172
+    elif conversion == "Gallons to Liters":
+        return value / 0.264172
+    elif conversion == "Milliliters to Fluid Ounces":
+        return value * 0.033814
+    elif conversion == "Fluid Ounces to Milliliters":
+        return value / 0.033814
 
+def convert_time(value, conversion):
+    if conversion == "Seconds to Minutes":
+        return value / 60.0
+    elif conversion == "Minutes to Seconds":
+        return value * 60.0
+    elif conversion == "Minutes to Hours":
+        return value / 60.0
+    elif conversion == "Hours to Minutes":
+        return value * 60.0
+    elif conversion == "Hours to Days":
+        return value / 24.0
+    elif conversion == "Days to Hours":
+        return value * 24.0
 
-# What is Growth Mindset Section
-st.subheader("💡 What is a Growth Mindset?")
-st.write("""
-A growth mindset is the belief that abilities can be developed through dedication and hard work. This contrasts with a fixed mindset, which assumes abilities are static and unchangeable.
-Here’s why adopting a growth mindset can make all the difference in both personal and academic life:
-""")
+def convert_speed(value, conversion):
+    if conversion == "km/h to mph":
+        return value * 0.621371
+    elif conversion == "mph to km/h":
+        return value / 0.621371
+    elif conversion == "m/s to km/h":
+        return value * 3.6
+    elif conversion == "km/h to m/s":
+        return value / 3.6
 
-# Columns for a better layout
-col1, col2 = st.columns(2)
-with col1:
-    st.write("""
-    - **Embrace Challenges:** Obstacles are opportunities to learn.
-    - **Learn from Mistakes:** Every mistake is a lesson for improvement.
-    """)
-with col2:
-    st.write("""
-    - **Persist Through Difficulty:** Stay determined and keep moving forward.
-    - **Celebrate Effort:** Focus on your effort, not just the results.
-    - **Stay Open:** Stay curious and flexible in your approach.
-    """)
+def convert_angle(value, conversion):
+    if conversion == "Degrees to Radians":
+        return math.radians(value)
+    elif conversion == "Radians to Degrees":
+        return math.degrees(value)
 
+def convert_currency(value, conversion):
+    # Using static exchange rates
+    # Example rates: 1 USD = 0.85 EUR, 1 EUR = 1.18 USD, 1 USD = 82 INR, 1 INR = 0.0122 USD
+    if conversion == "USD to EUR":
+        return value * 0.85
+    elif conversion == "EUR to USD":
+        return value * 1.18
+    elif conversion == "USD to INR":
+        return value * 82.0
+    elif conversion == "INR to USD":
+        return value * 0.0122
+
+# ----------------------------
+# Conversion History Setup
+# ----------------------------
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+def add_history(category, conversion_type, input_value, result):
+    st.session_state.history.append({
+        "Category": category,
+        "Conversion": conversion_type,
+        "Input": input_value,
+        "Result": result,
+        "Timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    })
+
+# ----------------------------
+# Streamlit App UI Section
+# ----------------------------
+st.title("Advanced Unit Converter")
+st.write("This enhanced converter supports multiple conversion types and keeps a history of your conversions.")
+
+# Sidebar: Choose conversion category
+category = st.sidebar.selectbox("Select Conversion Category", [
+    "Length", "Temperature", "Weight", "Volume", "Time", "Speed", "Angle", "Currency"
+])
+
+value = st.number_input("Enter the value to convert", value=0.0)
+
+# Process based on selected category
+if category == "Length":
+    conversion_type = st.selectbox("Select Length Conversion", [
+        "Kilometers to Miles", "Miles to Kilometers",
+        "Meters to Feet", "Feet to Meters",
+        "Centimeters to Inches", "Inches to Centimeters",
+        "Millimeters to Inches", "Inches to Millimeters"
+    ])
+    if st.button("Convert", key="length"):
+        result = convert_length(value, conversion_type)
+        st.success(f"Converted Value: {result}")
+        add_history(category, conversion_type, value, result)
+
+elif category == "Temperature":
+    conversion_type = st.selectbox("Select Temperature Conversion", [
+        "Celsius to Fahrenheit", "Fahrenheit to Celsius",
+        "Celsius to Kelvin", "Kelvin to Celsius",
+        "Fahrenheit to Kelvin", "Kelvin to Fahrenheit"
+    ])
+    if st.button("Convert", key="temperature"):
+        result = convert_temperature(value, conversion_type)
+        st.success(f"Converted Temperature: {result}")
+        add_history(category, conversion_type, value, result)
+
+elif category == "Weight":
+    conversion_type = st.selectbox("Select Weight Conversion", [
+        "Kilograms to Pounds", "Pounds to Kilograms",
+        "Grams to Ounces", "Ounces to Grams"
+    ])
+    if st.button("Convert", key="weight"):
+        result = convert_weight(value, conversion_type)
+        st.success(f"Converted Weight: {result}")
+        add_history(category, conversion_type, value, result)
+
+elif category == "Volume":
+    conversion_type = st.selectbox("Select Volume Conversion", [
+        "Liters to Gallons", "Gallons to Liters",
+        "Milliliters to Fluid Ounces", "Fluid Ounces to Milliliters"
+    ])
+    if st.button("Convert", key="volume"):
+        result = convert_volume(value, conversion_type)
+        st.success(f"Converted Volume: {result}")
+        add_history(category, conversion_type, value, result)
+
+elif category == "Time":
+    conversion_type = st.selectbox("Select Time Conversion", [
+        "Seconds to Minutes", "Minutes to Seconds",
+        "Minutes to Hours", "Hours to Minutes",
+        "Hours to Days", "Days to Hours"
+    ])
+    if st.button("Convert", key="time"):
+        result = convert_time(value, conversion_type)
+        st.success(f"Converted Time: {result}")
+        add_history(category, conversion_type, value, result)
+
+elif category == "Speed":
+    conversion_type = st.selectbox("Select Speed Conversion", [
+        "km/h to mph", "mph to km/h",
+        "m/s to km/h", "km/h to m/s"
+    ])
+    if st.button("Convert", key="speed"):
+        result = convert_speed(value, conversion_type)
+        st.success(f"Converted Speed: {result}")
+        add_history(category, conversion_type, value, result)
+
+elif category == "Angle":
+    conversion_type = st.selectbox("Select Angle Conversion", [
+        "Degrees to Radians", "Radians to Degrees"
+    ])
+    if st.button("Convert", key="angle"):
+        result = convert_angle(value, conversion_type)
+        st.success(f"Converted Angle: {result}")
+        add_history(category, conversion_type, value, result)
+
+elif category == "Currency":
+    conversion_type = st.selectbox("Select Currency Conversion", [
+        "USD to EUR", "EUR to USD",
+        "USD to INR", "INR to USD"
+    ])
+    if st.button("Convert", key="currency"):
+        result = convert_currency(value, conversion_type)
+        st.success(f"Converted Currency: {result}")
+        add_history(category, conversion_type, value, result)
+
+# ----------------------------
+# Display Conversion History
+# ----------------------------
 st.markdown("---")
-
-# How to Practice Growth Mindset Section
-st.subheader("🧠 How to Practice Growth Mindset?")
-st.write("Adopt the following habits to develop a growth mindset:")
-
-# Sliders for self-assessment
-challenge_slider = st.slider("How much do you embrace challenges?", 0, 100, 50)
-mistake_slider = st.slider("How well do you learn from your mistakes?", 0, 100, 50)
-effort_slider = st.slider("How often do you recognize your efforts?", 0, 100, 50)
-
-if st.button("Evaluate Yourself"):
-    st.write(f"### You embrace challenges {challenge_slider}% of the time!")
-    st.write(f"You learn from mistakes {mistake_slider}% of the time!")
-    st.write(f"You recognize your efforts {effort_slider}% of the time!")
-
-st.markdown("---")
-
-# User Goals Section
-st.subheader("🎯 Your Learning Goals")
-
-st.write("""
-Setting learning goals helps you stay on track in developing your growth mindset.
-""")
-
-# Goal Input
-user_goal = st.text_input("What is one learning goal you want to achieve?")
-if user_goal:
-    st.success(f"Great! Keep working on this goal: **{user_goal}**")
-
-# Checkboxes for self-reflection
-st.write("### Reflect on your learning:")
-challenge_checkbox = st.checkbox("I embrace challenges")
-mistake_checkbox = st.checkbox("I learn from mistakes")
-effort_checkbox = st.checkbox("I recognize and celebrate my efforts")
-
-if challenge_checkbox and mistake_checkbox and effort_checkbox:
-    st.balloons()
-    st.write("Fantastic! You're embracing a full growth mindset!")
-
-st.markdown("---")
-
-# Motivational Quote Section
-st.subheader("💬 Motivational Quote of the Day")
-
-# Add random motivational quotes
-quotes = [
-    "Believe you can, and you're halfway there. - Theodore Roosevelt",
-    "Success is not final, failure is not fatal: It is the courage to continue that counts. - Winston Churchill",
-    "Hardships often prepare ordinary people for an extraordinary destiny. - C.S. Lewis",
-    "It’s not that I’m so smart, it’s just that I stay with problems longer. - Albert Einstein",
-    "Strive for progress, not perfection.",
-]
-
-daily_quote = random.choice(quotes)
-st.info(f"**{daily_quote}**")
-
-# Closing message
-st.write("**Remember:** Adopting a growth mindset is a journey, not a destination. Stay committed to continuous improvement!")
-
-st.markdown("---")
-
-# Footer
-st.markdown("#### Built by 😊 [Syeda Hifza 🔥]")
-st.markdown("#### [Connect with me on LinkedIn](https://www.linkedin.com/in/syeda-hifza-1a0b4b1b3/)")
+st.subheader("Conversion History")
+if st.session_state.history:
+    st.table(st.session_state.history)
+    if st.button("Clear History"):
+        st.session_state.history = []
+else:
+    st.write("No conversions yet.")
