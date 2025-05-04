@@ -1,1 +1,1 @@
-cryptography
+pip install cryptography
