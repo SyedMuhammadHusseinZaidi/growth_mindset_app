@@ -1,1 +1,2 @@
-
+Name: cryptography
+Version: 44.0.2
